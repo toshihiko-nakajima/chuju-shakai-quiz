@@ -232,8 +232,8 @@ h1,h2,h3{font-family:var(--font-display);margin:0;text-wrap:balance;}
 
   <!-- スタート画面 -->
   <section id="screen-start" class="card">
-    <h2 style="font-size:20px;">ランダム30問に挑戦</h2>
-    <p class="lede">四谷大塚偏差値55〜65程度を想定した、中学受験社会の問題集です。本番の試験を意識し、選択問題と記述・一問一答問題を混ぜて、地理・歴史・公民の全範囲から各分野10問ずつランダムに出題します。</p>
+    <h2 style="font-size:20px;">ランダム10問に挑戦</h2>
+    <p class="lede">四谷大塚偏差値55〜65程度を想定した、中学受験社会の問題集です。本番の試験を意識し、選択問題と記述・一問一答問題を混ぜて、地理・歴史・公民の全範囲からランダムに10問出題します。</p>
     <div class="legend">
       <span class="tag tag-地理">地理</span>
       <span class="tag tag-歴史">歴史</span>
@@ -243,15 +243,15 @@ h1,h2,h3{font-family:var(--font-display);margin:0;text-wrap:balance;}
       <li>4択の選択問題と、用語や短い説明を書く記述・一問一答形式の問題が混ざって出題されます。</li>
       <li>記述・一問一答は、模範解答を見てから自分で○（できた）／△（部分的）／×（できなかった）を選んで採点します。</li>
       <li>1問ごとに、答えあわせの後すぐに解説が表示されます。</li>
-      <li>全30問が終わると、合計点と分野別の成績が表示されます。</li>
+      <li>全10問が終わると、合計点と分野別の成績が表示されます。</li>
     </ul>
-    <button class="btn btn-primary" id="btn-start">30問スタート</button>
+    <button class="btn btn-primary" id="btn-start">10問スタート</button>
   </section>
 
   <!-- クイズ画面 -->
   <section id="screen-quiz" class="card" hidden>
     <div class="progress-row">
-      <span id="progress-text">1 / 30問</span>
+      <span id="progress-text">1 / 10問</span>
       <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
       <span id="progress-score">0点</span>
     </div>
@@ -281,7 +281,7 @@ h1,h2,h3{font-family:var(--font-display);margin:0;text-wrap:balance;}
   <!-- 結果画面 -->
   <section id="screen-result" class="card" hidden>
     <div class="score-hero">
-      <div class="score-num"><span id="score-total">0</span><span> / <span id="score-max">30</span>点</span></div>
+      <div class="score-num"><span id="score-total">0</span><span> / <span id="score-max">10</span>点</span></div>
       <div class="score-tier" id="score-tier"></div>
     </div>
     <div class="breakdown" id="breakdown"></div>
@@ -546,7 +546,7 @@ explanation:"環境アセスメント(環境影響評価)は、道路やダム�
   "use strict";
   var ALL = window.QUIZ_DATA || [];
   var CATS = ["地理","歴史","公民"];
-  var PER_CATEGORY = 10;
+  var TOTAL_QUESTIONS = 10;
 
   var screenStart = document.getElementById("screen-start");
   var screenQuiz = document.getElementById("screen-quiz");
@@ -576,10 +576,14 @@ explanation:"環境アセスメント(環境影響評価)は、道路やダム�
   }
 
   function buildSession(){
+    var base = Math.floor(TOTAL_QUESTIONS / CATS.length);
+    var remainder = TOTAL_QUESTIONS - base * CATS.length;
+    var catsOrder = shuffle(CATS);
     var picked = [];
-    CATS.forEach(function(cat){
+    catsOrder.forEach(function(cat, i){
+      var count = base + (i < remainder ? 1 : 0);
       var pool = ALL.filter(function(q){ return q.category === cat; });
-      picked = picked.concat(shuffle(pool).slice(0, PER_CATEGORY));
+      picked = picked.concat(shuffle(pool).slice(0, count));
     });
     return shuffle(picked).map(shuffleChoiceOrder);
   }
